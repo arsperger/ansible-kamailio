@@ -1,5 +1,7 @@
 ### Kamailio installatio on Debian
 
+> part of kamailio HA deployment
+
 OS Debian
 
 Initial requirements:
@@ -13,5 +15,5 @@ Installation of Kamailio HA node in following sequence:
 - rtpengine
 - keepalived
 
-# TODO:
+### TODO:
 - kamailio-cfg-apply
