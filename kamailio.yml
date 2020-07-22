@@ -1,0 +1,54 @@
+- hosts: voiptest1
+  tasks:
+  - name: Include variables.
+    include_vars: "main.yml"
+
+  - name: Setup Kamailio repository key from keyserver (Debian)
+    apt_key:
+      url: '{{ kamailio_deb_key }}'
+      state: present
+    register: apt_key_result
+    until: apt_key_result is success
+    retries: 10
+    delay: 2
+
+  - name: Setup Kamailio repository (Debian)
+    apt_repository:
+      repo: 'deb {{ kamailio_deb_repo }}{{ kamailio_version }} {{ ansible_distribution_release }} main'
+      state: present
+      filename: kamailio
+      update_cache: no
+
+  - name: Setup Kamailio src repository (Debian)
+    apt_repository:
+      repo: 'deb-src {{ kamailio_deb_repo }}{{ kamailio_version }} {{ ansible_distribution_release }} main'
+      state: present
+      filename: kamailio
+      update_cache: yes
+
+  - name: Install Kamailio
+    apt:
+      update_cache: yes
+      name: kamailio
+      state: present
+    register: apt_install_result
+    until: apt_install_result is success
+    retries: 10
+    delay: 2
+
+  - name: Install Kamailio additional modules (Debian)
+    apt:
+      name: '{{ kamailio_modules }}'
+      state: present
+    when: kamailio_modules is defined and kamailio_modules | length
+    register: apt_modules_install_result
+    until: apt_modules_install_result is success
+    retries: 10
+    delay: 2
+
+  - name: Deploy Kamailio config
+    template:
+      src: '{{ kamailio_config }}'
+      dest: '/etc/kamailio/kamailio.cfg'
+      mode: 0644
+    when: kamailio_config is defined

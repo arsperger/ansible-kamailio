@@ -1,0 +1,6 @@
+---
+kamailio_version: 53
+kamailio_deb_key: 'http://deb.kamailio.org/kamailiodebkey.gpg'
+kamailio_deb_repo: 'http://deb.kamailio.org/kamailio'
+
+kamailio_modules: []
